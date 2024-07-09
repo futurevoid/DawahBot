@@ -2,6 +2,7 @@ import os
 import json
 import telebot
 from telebot import types
+from keep_alive import keep_alive
 
 # Load bot token from environment variables
 bot_token = os.getenv('BOT_TOKEN')
@@ -154,5 +155,6 @@ def material_handler(message):
 
     start_menu(message)
 
+keep_alive()
 # Polling for messages
 bot.infinity_polling()
