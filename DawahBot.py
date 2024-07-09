@@ -157,4 +157,4 @@ def material_handler(message):
 
 keep_alive()
 # Polling for messages
-bot.infinity_polling()
+bot.infinity_polling(skip_pending=True)
