@@ -60,25 +60,35 @@ def droos_prehandler(message):
     if message.text == '🏠 القائمة الرئيسية':
         start_menu(message)
         return
+    
+    
+    with open('droos.txt', 'r', encoding='utf-8') as file:
+        lines = file.readlines()
 
-    if user_state.get(message.chat.id) and 'searching' in user_state[message.chat.id]:
-        query = message.text.strip().lower()
-        matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
+    droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-        if matching_droos:
-            droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            for droos_name in matching_droos:
-                droos_markup.add(types.KeyboardButton(droos_name))
-            droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
-            droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-            bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب 🌿", reply_markup=droos_markup)
-            del user_state[message.chat.id]['searching']  # Remove the searching state
-        else:
-            bot.send_message(message.chat.id, "لم يتم العثور على دروس مطابقة. حاول مرة أخرى.")
-            start_menu(message)
+    for droos_line in lines[1:-1]:  # Exclude the first and last line
+        droos_markup.add(types.KeyboardButton(droos_line.strip()))
+    droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+    droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+    bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب من الازرار في الاسفل 🌿", reply_markup=droos_markup)
+    bot.send_message(message.chat.id, "او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه:", reply_markup=droos_markup)
+    bot.register_next_step_handler(message, droos_search)
+
+def droos_search(message):
+    query = message.text.strip().lower()
+    matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
+
+    if matching_droos:
+        droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for droos_name in matching_droos:
+            droos_markup.add(types.KeyboardButton(droos_name))
+        droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+        droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+        bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب 🌿", reply_markup=droos_markup)
     else:
-        bot.send_message(message.chat.id, "أدخل جزء من اسم الدرس أو الكلمة المفتاحية للبحث عنه:")
-        user_state[message.chat.id] = {'searching': True}  # Set searching state
+        bot.send_message(message.chat.id, "لم يتم العثور على دروس مطابقة. حاول مرة أخرى.")
+        droos_prehandler(message)
 
 # Handler for selecting specific lectures/materials
 @bot.message_handler(func=lambda message: message.text in materials or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الشروحات')
