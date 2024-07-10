@@ -61,24 +61,32 @@ def droos_prehandler(message):
         start_menu(message)
         return
 
-    with open('droos.txt', 'r', encoding='utf-8') as file:
-        lines = file.readlines()
+    if user_state.get(message.chat.id) and 'searching' in user_state[message.chat.id]:
+        query = message.text.strip().lower()
+        matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
 
-    droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-
-    for droos_line in lines[1:-1]:  # Exclude the first and last line
-        droos_markup.add(types.KeyboardButton(droos_line.strip()))
-
-    droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-    bot.send_message(message.chat.id, "اخـتَر الدورة المَطـلوبة 🌿", reply_markup=droos_markup)
+        if matching_droos:
+            droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            for droos_name in matching_droos:
+                droos_markup.add(types.KeyboardButton(droos_name))
+            droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+            droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+            bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب 🌿", reply_markup=droos_markup)
+            del user_state[message.chat.id]['searching']  # Remove the searching state
+        else:
+            bot.send_message(message.chat.id, "لم يتم العثور على دروس مطابقة. حاول مرة أخرى.")
+            start_menu(message)
+    else:
+        bot.send_message(message.chat.id, "أدخل جزء من اسم الدرس أو الكلمة المفتاحية للبحث عنه:")
+        user_state[message.chat.id] = {'searching': True}  # Set searching state
 
 # Handler for selecting specific lectures/materials
-@bot.message_handler(func=lambda message: message.text in materials or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الدورات')
+@bot.message_handler(func=lambda message: message.text in materials or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الشروحات')
 def droos_handler(message):
     if message.text == '🏠 القائمة الرئيسية':
         start_menu(message)
         return
-    elif message.text == '🔙 الرجوع الى الدورات':
+    elif message.text == '🔙 الرجوع الى الشروحات':
         droos_prehandler(message)
         return
     
@@ -91,17 +99,17 @@ def droos_handler(message):
     for lecture in lectures:
         droos_menu.add(types.KeyboardButton(lecture))
 
-    droos_menu.add(types.KeyboardButton("🔙 الرجوع الى الدورات"))
+    droos_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-    bot.send_message(message.chat.id, "اخـتَر المحاضرة المَطـلوبة 🌿", reply_markup=droos_menu)
+    bot.send_message(message.chat.id, "اخـتَر الدرس المَطـلوب 🌿", reply_markup=droos_menu)
 
 # Handler for selecting material types
-@bot.message_handler(func=lambda message: any(message.text in materials[course] for course in materials) or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الدورات')
+@bot.message_handler(func=lambda message: any(message.text in materials[course] for course in materials) or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الشروحات')
 def mat_type_handler(message):
     if message.text == '🏠 القائمة الرئيسية':
         start_menu(message)
         return
-    elif message.text == '🔙 الرجوع الى الدورات':
+    elif message.text == '🔙 الرجوع الى الشروحات':
         droos_prehandler(message)
         return
     
@@ -123,7 +131,7 @@ def mat_type_handler(message):
                 types.KeyboardButton(book),
                 types.KeyboardButton(test),
             )
-            material_menu.add(types.KeyboardButton("🔙 الرجوع الى الدورات"))
+            material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
             material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
             bot.send_message(message.chat.id, material_types, reply_markup=material_menu)
             return
@@ -131,6 +139,7 @@ def mat_type_handler(message):
             bot.send_message(message.chat.id, "Please select a valid option.")
     else:
         start_menu(message)
+
 
 # Handler for providing the selected material
 @bot.message_handler(func=lambda message: any(mat_type in message.text for mat_type in [audio, yt, txt, book, test]) or message.text == '🏠 القائمة الرئيسية' )
@@ -153,5 +162,6 @@ def material_handler(message):
 
     start_menu(message)
 
+
 # Polling for messages
-bot.infinity_polling()
+bot.infinity_polling(skip_pending=True)
