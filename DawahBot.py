@@ -173,5 +173,7 @@ def material_handler(message):
     start_menu(message)
 
 
+
+bot.polling(none_stop=True)
 # Polling for messages
-bot.infinity_polling(skip_pending=True)
+#bot.infinity_polling(skip_pending=True)
