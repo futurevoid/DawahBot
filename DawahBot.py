@@ -174,7 +174,8 @@ def material_handler(message):
     start_menu(message)
 
 
-keep_alive()
 
+
+bot.set_webhook(url='https://dawahbot-f96c94bbdd5b.herokuapp.com/' + bot_token)
 # Polling for messages
 bot.infinity_polling(skip_pending=True)
