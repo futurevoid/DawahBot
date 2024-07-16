@@ -1,1 +1,1 @@
-worker: python3 Dawahbot.py
+worker: python3 DawahBot.py
