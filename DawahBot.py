@@ -80,6 +80,11 @@ def droos_search(message):
     query = message.text.strip().lower()
     matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
 
+    if message.text == materials.keys():
+        droos_handler(message)
+        return
+
+
     if matching_droos:
         droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         for droos_name in matching_droos:
@@ -128,9 +133,9 @@ def mat_type_handler(message):
     if user_id in user_state:
         course = user_state[user_id].get('course')
         if not course:
-            start_menu(message)
+            droos_prehandler(message)
             return
-
+        
         if message.text in materials[course]:
             lecture = message.text
             user_state[user_id]['lecture'] = lecture  # Update user state with selected lecture
