@@ -6,7 +6,7 @@ from keep_alive import keep_alive
 
 # Load bot token from environment variables
 bot_token = os.getenv('BOT_TOKEN')
-bot = telebot.TeleBot(bot_token)
+bot = telebot.TeleBot("7271890883:AAHV25203gANi6fopsr7aG0lGAydSnCNAlI")
 
 # Introductory message and material types
 intro_message = """السلام عليكم ورحمة الله وبركاته.,🌺
@@ -72,15 +72,18 @@ def droos_prehandler(message):
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
     droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-    bot.send_message(message.chat.id, " اخـتَر الشرح المَطـلوب من الازرار في الاسفل \n او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه 🌿 ", reply_markup=droos_markup)
+    bot.send_message(message.chat.id, "🌿 اخـتَر الشرح المَطـلوب من الازرار في الاسفل \n او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه  ", reply_markup=droos_markup)
     bot.register_next_step_handler(message, droos_search)
 
 def droos_search(message):
     query = message.text.strip().lower()
     print(query)
     matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
-
-
+    
+    for droos_name in materials.keys():
+        if query == droos_name.lower():
+            droos_handler(message)
+            return
 
     if matching_droos:
         droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
