@@ -72,17 +72,14 @@ def droos_prehandler(message):
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
     droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-    bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب من الازرار في الاسفل 🌿", reply_markup=droos_markup)
-    bot.send_message(message.chat.id, "او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه:", reply_markup=droos_markup)
+    bot.send_message(message.chat.id, " اخـتَر الشرح المَطـلوب من الازرار في الاسفل \n او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه 🌿 ", reply_markup=droos_markup)
     bot.register_next_step_handler(message, droos_search)
 
 def droos_search(message):
     query = message.text.strip().lower()
+    print(query)
     matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
 
-    if message.text == materials.keys():
-        droos_handler(message)
-        return
 
 
     if matching_droos:

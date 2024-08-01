@@ -2,6 +2,7 @@ import os
 import json
 import telebot
 from telebot import types
+from keep_alive import keep_alive
 
 # Load bot token from environment variables
 bot_token = os.getenv('BOT_TOKEN')
@@ -60,7 +61,8 @@ def droos_prehandler(message):
     if message.text == '🏠 القائمة الرئيسية':
         start_menu(message)
         return
-
+    
+    
     with open('droos.txt', 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
@@ -68,9 +70,28 @@ def droos_prehandler(message):
 
     for droos_line in lines[1:-1]:  # Exclude the first and last line
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
-
+    droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-    bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب 🌿", reply_markup=droos_markup)
+    bot.send_message(message.chat.id, " اخـتَر الشرح المَطـلوب من الازرار في الاسفل \n او أدخل جزء من اسم الدرس أو كلمة مفتاحية للبحث عنه 🌿 ", reply_markup=droos_markup)
+    bot.register_next_step_handler(message, droos_search)
+
+def droos_search(message):
+    query = message.text.strip().lower()
+    print(query)
+    matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
+
+
+
+    if matching_droos:
+        droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for droos_name in matching_droos:
+            droos_markup.add(types.KeyboardButton(droos_name))
+        droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+        droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+        bot.send_message(message.chat.id, "اخـتَر الشرح المَطـلوب 🌿", reply_markup=droos_markup)
+    else:
+        bot.send_message(message.chat.id, "لم يتم العثور على دروس مطابقة. حاول مرة أخرى.")
+        droos_prehandler(message)
 
 # Handler for selecting specific lectures/materials
 @bot.message_handler(func=lambda message: message.text in materials or message.text == '🏠 القائمة الرئيسية' or message.text == '🔙 الرجوع الى الشروحات')
@@ -109,9 +130,9 @@ def mat_type_handler(message):
     if user_id in user_state:
         course = user_state[user_id].get('course')
         if not course:
-            start_menu(message)
+            droos_prehandler(message)
             return
-
+        
         if message.text in materials[course]:
             lecture = message.text
             user_state[user_id]['lecture'] = lecture  # Update user state with selected lecture
@@ -155,5 +176,6 @@ def material_handler(message):
     start_menu(message)
 
 
+keep_alive()
 # Polling for messages
 bot.infinity_polling(skip_pending=True)
