@@ -138,7 +138,7 @@ def mat_type_handler(message):
             droos_prehandler(message)
             return
         
-        if message.text in "الاختبار النهائي":
+        if message.text in final_test:
             lecture = message.text
             user_state[user_id]['lecture'] = lecture
             material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -170,7 +170,7 @@ def mat_type_handler(message):
 
 
 # Handler for providing the selected material
-@bot.message_handler(func=lambda message: any(mat_type in message.text for mat_type in [audio, yt, txt, book, test]) or message.text == '🏠 القائمة الرئيسية' )
+@bot.message_handler(func=lambda message: any(mat_type in message.text for mat_type in [audio, yt, txt, book, test]) or message.text == '🏠 القائمة الرئيسية' or message.text == "الاختبار النهائي ✏️")
 def material_handler(message):
     if message.text == "🏠 القائمة الرئيسية":
         start_menu(message)
