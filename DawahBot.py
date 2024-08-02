@@ -1,5 +1,6 @@
 import os
 import json
+from typing import final
 import telebot
 from telebot import types
 from keep_alive import keep_alive
@@ -35,6 +36,7 @@ yt = "2- لينك اليوتيوب. 📽"
 txt = "3- تفريغ كتابي. 📝"
 book = "4- الكتاب. 📚"
 test = "5- الاختبار. ✏️"
+final_test = "الاختبار النهائي ✏️"
 
 # Load materials data from JSON file
 with open("materials.json", "r", encoding="utf-8") as file:
@@ -136,6 +138,16 @@ def mat_type_handler(message):
             droos_prehandler(message)
             return
         
+        if message.text in "الاختبار النهائي":
+            lecture = message.text
+            user_state[user_id]['lecture'] = lecture
+            material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            material_menu.add(types.KeyboardButton(final_test))
+            material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+            material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+            bot.send_message(message.chat.id, material_types, reply_markup=material_menu)
+            return
+            
         if message.text in materials[course]:
             lecture = message.text
             user_state[user_id]['lecture'] = lecture  # Update user state with selected lecture
