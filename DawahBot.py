@@ -145,7 +145,7 @@ def mat_type_handler(message):
             material_menu.add(types.KeyboardButton(final_test))
             material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
             material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-            bot.send_message(message.chat.id, material_types, reply_markup=material_menu)
+            bot.send_message(message.chat.id, final_test, reply_markup=material_menu)
             return
             
         if message.text in materials[course]:
