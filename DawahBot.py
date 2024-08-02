@@ -141,11 +141,10 @@ def mat_type_handler(message):
         if message.text in final_test:
             lecture = message.text
             user_state[user_id]['lecture'] = lecture
-            material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            material_menu.add(types.KeyboardButton(final_test))
-            material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
-            material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-            bot.send_message(message.chat.id, final_test, reply_markup=material_menu)
+            material = materials[course][lecture].get(final_test)
+            if material:
+                bot.send_message(message.chat.id, material)
+                return
             return
             
         if message.text in materials[course]:
