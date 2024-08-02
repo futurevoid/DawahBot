@@ -7,7 +7,7 @@ from keep_alive import keep_alive
 
 # Load bot token from environment variables
 bot_token = os.getenv('BOT_TOKEN')
-bot = telebot.TeleBot("7271890883:AAHV25203gANi6fopsr7aG0lGAydSnCNAlI")
+bot = telebot.TeleBot(bot_token)
 
 # Introductory message and material types
 intro_message = """السلام عليكم ورحمة الله وبركاته.,🌺
