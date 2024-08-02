@@ -68,7 +68,7 @@ def droos_prehandler(message):
 
     droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    for droos_line in lines[1:-1]:  # Exclude the first and last line
+    for droos_line in materials.keys():  # Exclude the first and last line
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
     droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))

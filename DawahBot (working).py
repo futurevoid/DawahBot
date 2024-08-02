@@ -77,7 +77,6 @@ def droos_prehandler(message):
 
 def droos_search(message):
     query = message.text.strip().lower()
-    print(query)
     matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
 
 
