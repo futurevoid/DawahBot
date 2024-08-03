@@ -64,13 +64,9 @@ def droos_prehandler(message):
         start_menu(message)
         return
     
-    
-    with open('droos.txt', 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-
     droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    for droos_line in materials.keys():  # Exclude the first and last line
+    for droos_line in materials.keys():  # Add all courses to the keyboard
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
     droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
