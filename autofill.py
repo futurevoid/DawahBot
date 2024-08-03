@@ -10,10 +10,11 @@ with open('links.txt', 'r') as f:
 
 # Update the materials dictionary with the links
 for i, line in enumerate(lines, start=1):
-    key = f"الدرس {i}"
+    sharh = "شرح كتاب اصول الفقة التي يعلم منها حاله الشيخ خالد منصور"
+    dars = f"الدرس {i}"
     mat = "2- لينك اليوتيوب. 📽"
-    if key in materials["شرح كتاب اصول الفقة التي يعلم منها حاله الشيخ خالد منصور"]:
-        materials["شرح كتاب اصول الفقة التي يعلم منها حاله الشيخ خالد منصور"][key][mat] = line.strip()
+    if dars in materials[sharh]:
+        materials[sharh][dars][mat] = line.strip()
 
 # Write the updated materials back to the JSON file
 with open('materials.json', 'w') as f:
