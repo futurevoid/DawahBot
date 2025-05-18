@@ -35,6 +35,7 @@ yt = "2- لينك اليوتيوب. 📽"
 txt = "3- تفريغ كتابي. 📝"
 book = "4- الكتاب. 📚"
 test = "5- الاختبار. ✏️"
+full_dars = "الدرس"
 
 # Load materials data from JSON file
 with open("materials.json", "r", encoding="utf-8") as file:
@@ -133,19 +134,32 @@ def mat_type_handler(message):
             return
         
         if message.text in materials[course]:
+            print(materials[course])
             lecture = message.text
             user_state[user_id]['lecture'] = lecture  # Update user state with selected lecture
-            material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            material_menu.add(
-                types.KeyboardButton(audio),
-                types.KeyboardButton(yt),
-                types.KeyboardButton(txt),
-                types.KeyboardButton(book),
-                types.KeyboardButton(test),
-            )
-            material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
-            material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
-            bot.send_message(message.chat.id, material_types, reply_markup=material_menu)
+             # Check if this lecture only has 'الدرس' as a key
+            lecture_content = materials[course][lecture]
+            print(lecture_content)
+            if list(lecture_content.keys()) == [full_dars]:
+                # Only show 'الدرس' button
+                material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+                material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+                full_lec = materials[course][lecture][full_dars]
+                bot.send_message(message.chat.id,full_lec,reply_markup=material_menu)
+            else:
+                # Show all material type buttons
+                material_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                material_menu.add(
+                    types.KeyboardButton(audio),
+                    types.KeyboardButton(yt),
+                    types.KeyboardButton(txt),
+                    types.KeyboardButton(book),
+                    types.KeyboardButton(test),
+                )
+                material_menu.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
+                material_menu.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
+                bot.send_message(message.chat.id, material_types, reply_markup=material_menu)
             return
         else:
             bot.send_message(message.chat.id, "Please select a valid option.")
