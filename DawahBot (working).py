@@ -61,14 +61,10 @@ def droos_prehandler(message):
     if message.text == '🏠 القائمة الرئيسية':
         start_menu(message)
         return
-    
-    
-    with open('droos.txt', 'r', encoding='utf-8') as file:
-        lines = file.readlines()
 
     droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    for droos_line in lines[1:-1]:  # Exclude the first and last line
+    for droos_line in materials.keys():  # Add all courses to the keyboard
         droos_markup.add(types.KeyboardButton(droos_line.strip()))
     droos_markup.add(types.KeyboardButton("🔙 الرجوع الى الشروحات"))
     droos_markup.add(types.KeyboardButton("🏠 القائمة الرئيسية"))
@@ -77,9 +73,13 @@ def droos_prehandler(message):
 
 def droos_search(message):
     query = message.text.strip().lower()
+    print(query)
     matching_droos = [droos_name for droos_name in materials.keys() if query in droos_name.lower()]
-
-
+    
+    for droos_name in materials.keys():
+        if query == droos_name.lower():
+            droos_handler(message)
+            return
 
     if matching_droos:
         droos_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
